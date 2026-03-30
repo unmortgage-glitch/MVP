@@ -1,13 +1,127 @@
-<section class="container section">
-    <div class="card-panel center-align teal lighten-5">
-        <h4><%- block.headline || 'Mortgage Calculator' %></h4>
-        
-        <div class="calculator-embed" data-calculator-type="<%- block.type %>">
-            <p>Component Embed Placeholder: **<%- block.type.toUpperCase() %> Calculator**</p>
-            <p class="grey-text">
-                The actual interactive calculator widget (e.g., iframe from a third-party service) 
-                will be injected here via client-side code targeting this placeholder.
-            </p>
-        </div>
+<%# views/partials/calculator.ejs %>
+<%# Affordability calculator → POST /api/v2/affordability → result panel → Book appointment CTA %>
+
+<section class="calculator-section">
+  <h2>Affordability Calculator</h2>
+
+  <div class="form-group">
+    <label for="calc-income">Annual Household Income</label>
+    <input type="number" id="calc-income" placeholder="e.g. 95000" min="0" step="1000">
+  </div>
+
+  <div class="form-group">
+    <label for="calc-debts">Monthly Debt Payments</label>
+    <input type="number" id="calc-debts" placeholder="e.g. 400" min="0" step="50">
+  </div>
+
+  <div class="form-group">
+    <label for="calc-rate">Interest Rate (%)</label>
+    <input type="number" id="calc-rate" placeholder="e.g. 5.25" min="0" step="0.05">
+  </div>
+
+  <div class="form-group">
+    <label for="calc-amort">Amortization (years)</label>
+    <select id="calc-amort">
+      <option value="25">25 years</option>
+      <option value="20">20 years</option>
+      <option value="15">15 years</option>
+      <option value="30">30 years</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="calc-heat">Monthly Heating Costs</label>
+    <input type="number" id="calc-heat" placeholder="e.g. 150" min="0" step="10" value="150">
+  </div>
+
+  <button class="btn-primary" id="calc-submit" onclick="runCalculator()">Calculate</button>
+
+  <div class="result-panel" id="calc-result" style="display:none;">
+    <div class="metric-row" id="calc-metrics"></div>
+    <div id="calc-cta" style="display:none;">
+      <p>Your numbers look strong. Ready to talk to a broker?</p>
+      <button class="btn-primary" onclick="scrollToBooking()">Book an Appointment</button>
     </div>
+  </div>
+
+  <div id="calc-error" class="result-panel result-panel--warn" style="display:none;"></div>
 </section>
+
+<script>
+  async function runCalculator() {
+    const btn = document.getElementById('calc-submit');
+    btn.disabled = true;
+    btn.textContent = 'Calculating…';
+
+    const payload = {
+      annual_income:      parseFloat(document.getElementById('calc-income').value) || 0,
+      monthly_debts:      parseFloat(document.getElementById('calc-debts').value) || 0,
+      interest_rate:      parseFloat(document.getElementById('calc-rate').value) || 0,
+      amortization_years: parseInt(document.getElementById('calc-amort').value, 10),
+      monthly_heat:       parseFloat(document.getElementById('calc-heat').value) || 150,
+    };
+
+    const errorEl = document.getElementById('calc-error');
+    const resultEl = document.getElementById('calc-result');
+    errorEl.style.display = 'none';
+    resultEl.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/v2/affordability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        errorEl.textContent = data.error || 'Calculation failed. Please check your inputs.';
+        errorEl.style.display = 'block';
+      } else {
+        const metrics = document.getElementById('calc-metrics');
+        metrics.innerHTML = `
+          <div class="metric-block ${data.gds <= 32 ? 'metric-block--green' : 'metric-block--red'}">
+            <span class="metric-label">GDS</span>
+            <span class="metric-value">${data.gds}%</span>
+            <span class="metric-limit">Limit 32%</span>
+          </div>
+          <div class="metric-block ${data.tds <= 44 ? 'metric-block--green' : 'metric-block--red'}">
+            <span class="metric-label">TDS</span>
+            <span class="metric-value">${data.tds}%</span>
+            <span class="metric-limit">Limit 44%</span>
+          </div>
+          <div class="metric-block">
+            <span class="metric-label">Max Mortgage</span>
+            <span class="metric-value">$${Number(data.maxMortgage).toLocaleString('en-CA')}</span>
+          </div>
+          <div class="metric-block">
+            <span class="metric-label">Monthly Payment</span>
+            <span class="metric-value">$${Number(data.monthlyPayment).toLocaleString('en-CA')}</span>
+          </div>
+        `;
+
+        resultEl.style.display = 'block';
+
+        // Show CTA if both ratios pass
+        const ctaEl = document.getElementById('calc-cta');
+        if (data.gds <= 32 && data.tds <= 44) {
+          ctaEl.style.display = 'block';
+        } else {
+          ctaEl.style.display = 'none';
+        }
+      }
+    } catch (err) {
+      errorEl.textContent = 'Network error. Please try again.';
+      errorEl.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Calculate';
+  }
+
+  function scrollToBooking() {
+    const target = document.getElementById('booking-section');
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>

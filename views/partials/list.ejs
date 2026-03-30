@@ -1,0 +1,10 @@
+<section class="container section">
+    <% if (block.headline) { %>
+        <h2 class="header"><%- block.headline %></h2>
+    <% } %>
+    <% if (block.ordered) { %>
+        <ol class="browser-default"><% block.items.forEach(item => { %><li><%- item %></li><% }); %></ol>
+    <% } else { %>
+        <ul class="browser-default"><% block.items.forEach(item => { %><li><%- item %></li><% }); %></ul>
+    <% } %>
+</section>

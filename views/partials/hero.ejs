@@ -1,0 +1,22 @@
+<section class="hero-section">
+    <div class="container">
+        <% if (hero && hero.imageUrl) { %>
+        <div class="row">
+            <div class="col s12">
+                <img src="/img/<%- hero.imageUrl %>" alt="<%- hero.imageAlt || '' %>" class="responsive-img">
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col s12">
+                <h1><%- hero && hero.headline ? hero.headline : 'No Headline' %></h1>
+                <p class="flow-text"><%- hero && hero.subheadline ? hero.subheadline : '' %></p>
+                <p><%- hero && hero.text ? hero.text : '' %></p>
+                <p><%- hero && hero.textSmall ? hero.textSmall : '' %></p>
+                <% if (hero && hero.ctaLink) { %>
+                <a href="<%- hero.ctaLink %>" class="btn btn-large waves-effect waves-light green darken-3"><%- hero.ctaText || 'Click Here' %></a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CMS Admin</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    <style>
+        body { background-color: #f4f5f7; padding-bottom: 50px; }
+        .input-field { position: relative; z-index: 1; }
+        .card { overflow: visible !important; }
+        nav { position: static; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="blue-grey darken-4">
+        <div class="nav-wrapper container">
+            <a href="/" target="_blank" class="brand-logo left" style="font-size: 1.2rem;">
+                <i class="material-icons left">public</i> View Site
+            </a>
+            <span class="brand-logo center">Kenward CMS</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <%- formHtml %>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/admin.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slugInput = document.querySelector('input[name="slug"]');
+        const canonicalInput = document.querySelector('input[name="metadata[canonicalUrl]"]');
+        const browserTitleInput = document.querySelector('input[name="metadata[title]"]');
+        
+        // Base URL is the user's defined domain.
+        const BASE_URL = 'https://kenward.ca/'; 
+
+        if (slugInput && canonicalInput && browserTitleInput) {
+            slugInput.addEventListener('input', function() {
+                // 1. Clean the slug (ensure it's lowercase, alphanumeric with dashes)
+                const slug = this.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-');
+                this.value = slug; // Update the slug input field to show the clean version
+
+                // 2. Update Canonical URL
+                canonicalInput.value = BASE_URL + slug;
+
+                // 3. Update Browser Title (Initial Suggestion) - Only suggest if the title is empty
+                if (!browserTitleInput.value || browserTitleInput.value.toLowerCase() === canonicalInput.value.toLowerCase()) { 
+                    const titleSuggestion = slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    browserTitleInput.value = titleSuggestion;
+                }
+                
+                // Re-run Materialize text updates (important for label positioning)
+                M.updateTextFields(); 
+            });
+        }
+    });
+    </script>
+</body>
+</html>

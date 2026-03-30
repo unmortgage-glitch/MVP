@@ -1,0 +1,115 @@
+/* --- 2. General Body & Typography Styles --- */
+body {
+    background-color: #fff;
+    font-family: "Proxima Nova", sans-serif;
+    color: #333333;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Merriweather", serif;
+    color: #166534; /* Your brand's green */
+}
+
+/* --- 3. Header & Logo --- */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+}
+
+/* SVG Logo Sizing */
+.logo-image {
+    width: 100px;
+    height: auto;
+}
+
+.brand-name {
+    font-family: "Merriweather", serif;
+    color: #166534;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.phone-number a {
+    color: #166534;
+    font-weight: 700;
+}
+
+/* --- 4. Hero Section & Content Block Styles --- */
+.hero-section {
+    text-align: center;
+}
+
+/* Typographic Hierarchy for Articles */
+/* Rule for the MAIN article title (the very first h2 on the page) */
+main .section:first-child .header {
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 120%;
+    margin-bottom: 1rem;
+}
+
+/* Rule for all subsequent sub-headings */
+main .section .header {
+    font-size: 2.0rem;
+    line-height: 110%;
+}
+
+.flow-text {
+    font-weight: 300;
+}
+
+/* Branding for Quote and CTA Blocks */
+.quote-block .card-panel,
+.cta-block .btn-large {
+    background-color: #166534 !important; /* Your brand's green */
+}
+
+/* --- 5. Footer --- */
+footer.page-footer {
+    background-color: #fff;
+    color: #333333;
+    padding-top: 20px;
+}
+
+footer .footer-copyright {
+    background-color: #fafafa;
+    color: #666;
+}
+
+footer .card {
+    background-color: #fff;
+    box-shadow: none;
+    border: none;
+}
+
+footer .card-content {
+    text-align: center;
+}
+
+footer a {
+    color: #166534; /* Brand green for links */
+}
+
+/* --- 6. Media Queries for Layout --- */
+/* Correct rules for header justification on larger screens */
+@media (min-width: 993px) { /* Materialize 'large' breakpoint */
+    header .valign-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .brand-name-container {
+        flex-grow: 1;
+    }
+}
+

@@ -1,0 +1,11 @@
+<div class="container center-align section" style="padding: 40px 0;">
+    <% if (block.data.headline) { %>
+        <h3 class="light"><%- block.data.headline %></h3>
+    <% } %>
+    
+    <% if (block.data.buttonLink) { %>
+        <a href="<%- block.data.buttonLink %>" class="btn-large waves-effect waves-light green darken-2 pulse">
+            <%- block.data.buttonText || 'Click Here' %>
+        </a>
+    <% } %>
+</div>

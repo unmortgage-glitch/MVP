@@ -1,0 +1,26 @@
+{
+  "slug": "untitled",
+  "status": "live",
+  "metadata": {
+    "title": "Test Page",
+    "description": "",
+    "canonicalUrl": ""
+  },
+  "contentBlocks": [
+    {
+      "type": "hero"
+    },
+    {
+      "data": {
+        "headline": "",
+        "subheadline": "",
+        "text": "",
+        "textSmall": "",
+        "ctaText": "",
+        "ctaLink": "",
+        "imageUrl": "",
+        "imageAlt": ""
+      }
+    }
+  ]
+}

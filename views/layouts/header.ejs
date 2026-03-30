@@ -1,0 +1,40 @@
+<footer class="page-footer blue-grey darken-3">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text" style="font-weight: 300;">Kenward Mortgage</h5>
+                <p class="grey-text text-lighten-4 flow-text" style="font-size: 1.2rem;">
+                    <%# Dynamically pull the Slogan from your Config %>
+                    <%- (data && data.config && data.config.businessInfo) ? data.config.businessInfo.companySlogan : 'Be secure. Be well. Thrive.' %>
+                </p>
+            </div>
+
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text" style="font-weight: 300;">Connect</h5>
+                <ul>
+                    <% if (data && data.config && data.config.businessInfo) { %>
+                        <li style="margin-bottom: 10px;">
+                            <a class="grey-text text-lighten-3 valign-wrapper" href="tel:<%- data.config.businessInfo.phone %>">
+                                <i class="material-icons tiny left">phone</i> 
+                                <%- data.config.businessInfo.phone || '250 918 8169' %>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="grey-text text-lighten-3 valign-wrapper" href="mailto:<%- data.config.businessInfo.email %>">
+                                <i class="material-icons tiny left">email</i> 
+                                <%- data.config.businessInfo.email || 'peter@kenward.ca' %>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-copyright blue-grey darken-4">
+        <div class="container">
+            © <%- new Date().getFullYear() %> Kenward Mortgage Broker Inc.
+            <span class="right hide-on-small-only grey-text text-darken-1">Agassiz, BC</span>
+        </div>
+    </div>
+</footer>

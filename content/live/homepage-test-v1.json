@@ -1,0 +1,62 @@
+{
+  "pageTitle": "Agassiz & BC Mortgage Broker - Kenward Mortgage Inc.",
+  "contentBlocks": [
+    {
+      "type": "text",
+      "data": {
+        "body": "<h2>Welcome to Kenward Mortgage Broker Inc.</h2><p class=\"flow-text\">As a licensed mortgage broker in BC and a member of CMBABC, I specialize in finding the best solutions for homeowners in Agassiz and across British Columbia. My goal is to ensure you **Be secure. Be well. Thrive**.</p><p>We use a robust pipeline architecture to ensure every detail of your application is validated and processed against industry standards, including the **5 C's of Credit**.</p>"
+      }
+    },
+    {
+      "type": "image",
+      "data": {
+        "imageUrl": "/assets/images/agassiz-office-ext.jpg",
+        "altText": "Exterior view of Kenward Mortgage Broker Inc. office in Agassiz, BC.",
+        "caption": "Local expertise, digital security."
+      }
+    },
+    {
+      "type": "quote",
+      "data": {
+        "quoteText": "The commitment to security and transparency in the mortgage process is unmatched.",
+        "source": "A Satisfied BC Client"
+      }
+    },
+    {
+      "type": "form",
+      "data": {
+        "formTitle": "Start Your Mortgage Inquiry",
+        "targetEndpoint": "/api/lead", 
+        "targetMethod": "POST",
+        "submitButtonText": "Submit Inquiry & Get Pre-Qualified",
+        "fields": [
+          {
+            "name": "clientName",
+            "label": "Full Legal Name",
+            "type": "text",
+            "required": true,
+            "minLength": 5
+          },
+          {
+            "name": "annualIncome",
+            "label": "Gross Annual Income ($)",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "loanPurpose",
+            "label": "Mortgage Goal",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"value": "", "text": "Select a goal"},
+              {"value": "Purchase", "text": "New Purchase"},
+              {"value": "Refinance", "text": "Refinance Existing"}
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

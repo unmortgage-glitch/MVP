@@ -1,0 +1,31 @@
+<section class="container section">
+    <div class="card-panel">
+        <% if (block.headline) { %>
+            <h4 class="header center-align"><%- block.headline %></h4>
+        <% } %>
+        <% if (block.subheadline) { %>
+            <p class="center-align"><%- block.subheadline %></p>
+        <% } %>
+        <form action="<%- block.submitUrl %>" method="POST">
+            <div class="input-field">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="name" name="name" type="text" required>
+                <label for="name">Your Name</label>
+            </div>
+            <div class="input-field">
+                <i class="material-icons prefix">email</i>
+                <input id="email" name="email" type="email" required>
+                <label for="email">Your Email</label>
+            </div>
+            <div class="input-field">
+                <i class="material-icons prefix">mode_edit</i>
+                <textarea id="message" name="message" class="materialize-textarea" required></textarea>
+                <label for="message">Your Question</label>
+            </div>
+            <button class="btn waves-effect waves-light right" type="submit">
+                Send Message
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
+</section>

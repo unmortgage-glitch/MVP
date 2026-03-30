@@ -1,0 +1,13 @@
+<section class="container section">
+    <div class="card-panel center-align teal lighten-5">
+        <h4><%- block.headline || 'Mortgage Calculator' %></h4>
+        
+        <div class="calculator-embed" data-calculator-type="<%- block.type %>">
+            <p>Component Embed Placeholder: **<%- block.type.toUpperCase() %> Calculator**</p>
+            <p class="grey-text">
+                The actual interactive calculator widget (e.g., iframe from a third-party service) 
+                will be injected here via client-side code targeting this placeholder.
+            </p>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Detail — Kenward</title>
+  <link rel="stylesheet" href="/css/kenward.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="/broker/dashboard">Kenward</a>
+      <span class="header-meta">Lead Detail</span>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-inner">
+
+      <div class="page-title-row">
+        <h1><%= lead.borrowerName || 'Unnamed borrower' %></h1>
+        <span class="stage-badge stage-badge--<%= lead.status %>"><%= lead.stage %></span>
+      </div>
+
+      <!-- ── WARN Gates ─────────────────────────────────────────────────── -->
+      <% if (lead.warns && lead.warns.length > 0) { %>
+        <div class="result-panel result-panel--warn">
+          <h2>⚠ Outstanding Warnings</h2>
+          <p>All warnings must be attested before this lead can advance.</p>
+          <div class="warn-list">
+            <% lead.warns.forEach(function(warn) { %>
+              <div class="warn-item" id="warn-<%= warn.id %>">
+                <span class="warn-label"><%= warn.message %></span>
+                <button
+                  class="btn-secondary btn-small"
+                  onclick="attestWarn('<%= lead.id %>', '<%= warn.id %>', this)"
+                >Attest &amp; Clear</button>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- ── Kernel Results ──────────────────────────────────────────────── -->
+      <% if (lead.kernelResults) { %>
+        <section class="detail-section">
+          <h2>Affordability</h2>
+          <div class="result-panel">
+            <div class="metric-row">
+              <div class="metric-block <%= lead.kernelResults.gds <= 32 ? 'metric-block--green' : 'metric-block--red' %>">
+                <span class="metric-label">GDS</span>
+                <span class="metric-value"><%= lead.kernelResults.gds %>%</span>
+                <span class="metric-limit">Limit 32%</span>
+              </div>
+              <div class="metric-block <%= lead.kernelResults.tds <= 44 ? 'metric-block--green' : 'metric-block--red' %>">
+                <span class="metric-label">TDS</span>
+                <span class="metric-value"><%= lead.kernelResults.tds %>%</span>
+                <span class="metric-limit">Limit 44%</span>
+              </div>
+              <% if (lead.kernelResults.maxMortgage) { %>
+                <div class="metric-block">
+                  <span class="metric-label">Max Mortgage</span>
+                  <span class="metric-value">$<%= lead.kernelResults.maxMortgage.toLocaleString('en-CA') %></span>
+                </div>
+              <% } %>
+              <% if (lead.kernelResults.monthlyPayment) { %>
+                <div class="metric-block">
+                  <span class="metric-label">Monthly Payment</span>
+                  <span class="metric-value">$<%= lead.kernelResults.monthlyPayment.toLocaleString('en-CA') %></span>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </section>
+      <% } %>
+
+      <!-- ── Borrower Info ───────────────────────────────────────────────── -->
+      <section class="detail-section">
+        <h2>Borrower Information</h2>
+        <div class="result-panel">
+          <table class="detail-table">
+            <tbody>
+              <% if (lead.email) { %>
+                <tr><th>Email</th><td><%= lead.email %></td></tr>
+              <% } %>
+              <% if (lead.phone) { %>
+                <tr><th>Phone</th><td><%= lead.phone %></td></tr>
+              <% } %>
+              <% if (lead.employmentType) { %>
+                <tr><th>Employment</th><td><%= lead.employmentType %></td></tr>
+              <% } %>
+              <% if (lead.statedIncome) { %>
+                <tr><th>Stated Income</th><td>$<%= Number(lead.statedIncome).toLocaleString('en-CA') %>/yr</td></tr>
+              <% } %>
+              <% if (lead.propertyUse) { %>
+                <tr><th>Property Use</th><td><%= lead.propertyUse %></td></tr>
+              <% } %>
+              <% if (lead.bankruptcyHistory !== undefined) { %>
+                <tr><th>Bankruptcy History</th><td><%= lead.bankruptcyHistory ? 'Yes' : 'No' %></td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Documents ──────────────────────────────────────────────────── -->
+      <section class="detail-section">
+        <h2>Documents</h2>
+        <div class="result-panel">
+          <% if (lead.docs && lead.docs.length > 0) { %>
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Authenticity</th>
+                  <th>Uploaded</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% lead.docs.forEach(function(doc) { %>
+                  <tr>
+                    <td><%= doc.docType %></td>
+                    <td><%= doc.status %></td>
+                    <td>
+                      <% if (doc.authenticityScore !== undefined) { %>
+                        <span class="<%= doc.authenticityScore >= 0.80 ? 'metric--green' : 'metric--red' %>">
+                          <%= Math.round(doc.authenticityScore * 100) %>%
+                        </span>
+                      <% } else { %>
+                        —
+                      <% } %>
+                    </td>
+                    <td><%= doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString('en-CA') : '—' %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p>No documents uploaded yet.</p>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- ── Timeline ───────────────────────────────────────────────────── -->
+      <section class="detail-section">
+        <h2>Stage History</h2>
+        <div class="result-panel">
+          <% if (lead.history && lead.history.length > 0) { %>
+            <ol class="stage-history">
+              <% lead.history.forEach(function(entry) { %>
+                <li>
+                  <span class="history-stage"><%= entry.stage %></span>
+                  <span class="history-ts"><%= new Date(entry.at).toLocaleString('en-CA') %></span>
+                </li>
+              <% }); %>
+            </ol>
+          <% } else { %>
+            <p>No history recorded.</p>
+          <% } %>
+        </div>
+      </section>
+
+      <div class="action-row">
+        <a class="btn-secondary" href="/broker/dashboard">← Back to Dashboard</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    async function attestWarn(leadId, warnId, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Attesting…';
+
+      try {
+        const res = await fetch(`/api/v2/leads/${leadId}/attest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ warnId }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const warnEl = document.getElementById(`warn-${warnId}`);
+          if (warnEl) warnEl.remove();
+
+          const warnList = document.querySelector('.warn-list');
+          if (warnList && warnList.children.length === 0) {
+            warnList.closest('.result-panel--warn').remove();
+          }
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Attest & Clear';
+          alert(data.error || 'Attestation failed.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Attest & Clear';
+        alert('Network error. Please try again.');
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error — Kenward</title>
+  <link rel="stylesheet" href="/css/kenward.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="/">Kenward</a>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-inner page-inner--narrow">
+      <div class="result-panel result-panel--warn">
+        <h1><%= code || 'Error' %></h1>
+        <p><%= message || 'Something went wrong.' %></p>
+        <a class="btn-secondary" href="javascript:history.back()">← Go Back</a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

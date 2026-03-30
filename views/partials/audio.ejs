@@ -1,0 +1,13 @@
+<section class="container section">
+    <div class="row">
+        <div class="col s12 m8 offset-m2 center-align">
+            <audio controls preload="<%- block.preload || 'metadata' %>" style="width: 100%;">
+                <source src="<%- block.src %>" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <% if (block.caption) { %>
+            <p class="caption grey-text"><%- block.caption %></p>
+            <% } %>
+        </div>
+    </div>
+</section>

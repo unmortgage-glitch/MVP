@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Assessment — Kenward</title>
+  <link rel="stylesheet" href="/css/kenward.css">
+</head>
+<body>
+
+  <script>
+    window.KENWARD_LEAD_ID = '<%= leadId %>';
+    window.KENWARD_TOKEN   = '<%= token %>';
+  </script>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="wordmark">Kenward</span>
+      <span class="header-meta">Self-Assessment</span>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-inner page-inner--narrow">
+
+      <h1>Final Step</h1>
+      <p>A few last details so your broker has everything they need before your appointment.</p>
+
+      <div class="form-group">
+        <label for="sa-income">Your annual employment income</label>
+        <input type="number" id="sa-income" placeholder="e.g. 85000" min="0" step="1000">
+      </div>
+
+      <div class="form-group">
+        <label for="sa-employment">Employment type</label>
+        <select id="sa-employment">
+          <option value="">Select one…</option>
+          <option value="Employed">Employed (full-time)</option>
+          <option value="Part-time">Employed (part-time)</option>
+          <option value="Self-employed">Self-employed</option>
+          <option value="Contract">Contract / freelance</option>
+          <option value="Retired">Retired</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sa-down">Approximate down payment amount</label>
+        <input type="number" id="sa-down" placeholder="e.g. 60000" min="0" step="1000">
+      </div>
+
+      <div class="form-group">
+        <label for="sa-purchase">Approximate purchase price you're targeting</label>
+        <input type="number" id="sa-purchase" placeholder="e.g. 550000" min="0" step="5000">
+      </div>
+
+      <div class="form-group">
+        <label for="sa-condo">Is the property a condo?</label>
+        <select id="sa-condo">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sa-condo-fee">Monthly condo fee (if applicable)</label>
+        <input type="number" id="sa-condo-fee" placeholder="e.g. 350" min="0" step="50" value="0">
+      </div>
+
+      <div class="form-group">
+        <label for="sa-notes">Anything else your broker should know?</label>
+        <textarea id="sa-notes" rows="4" placeholder="Optional — any context that might help your broker"></textarea>
+      </div>
+
+      <button class="btn-primary" id="sa-submit" onclick="submitSelfAssessment()">Submit</button>
+
+      <div class="result-panel" id="sa-success" style="display:none;">
+        <p>✓ Assessment complete. You're all set for your appointment.</p>
+      </div>
+
+      <div class="result-panel result-panel--warn" id="sa-error" style="display:none;"></div>
+
+    </div>
+  </main>
+
+  <script>
+    async function submitSelfAssessment() {
+      const btn = document.getElementById('sa-submit');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      const errorEl = document.getElementById('sa-error');
+      errorEl.style.display = 'none';
+
+      const payload = {
+        stage: 'SELF_ASSESSMENT',
+        data: {
+          statedIncome:    parseFloat(document.getElementById('sa-income').value) || 0,
+          employmentType:  document.getElementById('sa-employment').value,
+          downPayment:     parseFloat(document.getElementById('sa-down').value) || 0,
+          purchasePrice:   parseFloat(document.getElementById('sa-purchase').value) || 0,
+          isCondo:         document.getElementById('sa-condo').value === 'true',
+          condoFee:        parseFloat(document.getElementById('sa-condo-fee').value) || 0,
+          notes:           document.getElementById('sa-notes').value.trim(),
+        },
+      };
+
+      try {
+        const res = await fetch(`/api/v2/leads/${window.KENWARD_LEAD_ID}/transition`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('sa-success').style.display = 'block';
+          btn.style.display = 'none';
+        } else {
+          errorEl.textContent = data.error || 'Submission failed. Please try again.';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Submit';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit';
+      }
+    }
+  </script>
+
+</body>
+</html>

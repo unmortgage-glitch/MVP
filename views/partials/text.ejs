@@ -1,0 +1,14 @@
+<div class="container section">
+    <div class="row">
+        <div class="col s12">
+            <% if (block.data.headline) { %>
+                <h2 class="center-align header" style="color: #333;"><%- block.data.headline %></h2>
+            <% } %>
+            <% if (block.data.body) { %>
+                <div class="flow-text grey-text text-darken-3">
+                    <%- block.data.body %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

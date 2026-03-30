@@ -1,0 +1,190 @@
+<style data-filename="public/kenward.css">
+/* kenward.css */
+/* Import Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap");
+
+/* General Body Styles */
+body {
+    background-color: #fff;
+    font-family: "Proxima Nova", sans-serif;
+    color: #333333;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: "Merriweather", serif;
+    color: #166534;
+}
+
+/* General Header Styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+/* Logo Styling */
+.logo-container {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #166534;
+    position: relative;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: orange;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: calc(50% + 43.3%);
+    transform: translate(-50%, -50%);
+}
+
+.letter-k {
+    font-size: 40px;
+    color: #166534;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Merriweather", serif;
+}
+
+.brand-name {
+    font-size: 40px;
+    font-weight: 500;
+    font-family: "Merriweather", serif;
+    color: #166534;
+}
+
+.phone-number a {
+    color: #166534;
+}
+
+main {
+    padding-top: 2rem;
+}
+
+#land-acknowledgement {
+    padding: 3rem 0;
+}
+
+#land-acknowledgement h2 {
+    font-size: 40px;
+    margin-bottom: 1.5rem;
+}
+
+#land-acknowledgement .card {
+    border: none;
+    box-shadow: none;
+}
+
+#land-acknowledgement .card-content {
+    padding: 2rem;
+}
+
+/* Hero Section Styles */
+#hero {
+    padding: 3rem 0;
+    text-align: center;
+    background-color: #fff;
+}
+
+.hero-headline {
+    font-size: 40px;
+    margin-bottom: 1.5rem;
+}
+
+.hero-subheadline {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.hero-cta {
+    font-size: 1.2rem;
+    color: #fff !important; /* Override Materialize text color for buttons */
+    background-color: #166534;
+}
+
+.hero-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.hero-text-small {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+/* Footer Styling */
+footer.page-footer {
+    background-color: #fff;
+    color: #333333;
+}
+
+footer .card {
+    background-color: #fff;
+    box-shadow: none;
+    border: none;
+}
+
+footer .card-content {
+    text-align: center;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer li {
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+footer a {
+    color: #166534;
+}
+
+/* Media Queries */
+@media (max-width: 600px) {
+    header .row {
+        flex-direction: column;
+    }
+    header .col {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .brand-name {
+        display: block;
+        font-size: 1.5rem;
+    }
+    .logo-container {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem;
+    }
+    .phone-number {
+        font-size: 1.2rem;
+        padding: 0.5rem;
+    }
+}
+</style>

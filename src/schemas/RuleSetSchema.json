@@ -1,0 +1,73 @@
+// RuleSetSchema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://kenward.ca/schemas/RuleSetSchema.json",
+  "title": "Compiled Ruleset Blueprint",
+  "description": "Schema for validating the compiled output of the .brief DSL. This is the blueprint for the executable business logic required for Airlock Validation.",
+  "type": "object",
+  "required": ["name", "constants", "rules"],
+  "properties": {
+    "name": {
+      "description": "The name of the ruleset (e.g., MORTGAGE_SUITABILITY).",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Z0-9_]+$"
+    },
+    "constants": {
+      "description": "An array of immutable constants defined in the ruleset, matching the compiler's pure output structure.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value"],
+        "properties": {
+          "name": { 
+            "description": "Constant name (e.g., MAX_TDS_RATIO).",
+            "type": "string", 
+            "pattern": "^[A-Z0-9_]+$" 
+          },
+          "value": { 
+            "description": "Constant value.",
+            "type": ["string", "number", "boolean"] 
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rules": {
+      "description": "An array of executable business rule definitions.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["NAME", "TYPE", "FORMULA"],
+        "properties": {
+          "NAME": {
+            "description": "A unique identifier for the rule.",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_]+$"
+          },
+          "TYPE": {
+            "description": "The category or execution type of the rule.",
+            "type": "string",
+            "enum": ["Validation", "Calculation", "Scorer", "Decision"]
+          },
+          "FORMULA": {
+            "description": "The executable conditional or calculation logic (e.g., [TDS] <= [MAX_TDS_RATIO]).",
+            "type": "string"
+          },
+          "MESSAGE": {
+            "description": "The failure message if a Validation rule fails.",
+            "type": "string"
+          },
+          "PRIORITY": {
+            "description": "The execution priority (lower number executes first).",
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

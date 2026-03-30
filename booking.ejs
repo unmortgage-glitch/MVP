@@ -1,0 +1,112 @@
+<%# views/partials/booking.ejs %>
+<%# Datetime + contact form → POST /api/v2/leads/:id/transition stage BOOKING %>
+
+<section class="booking-section" id="booking-section">
+  <h2>Book Your Appointment</h2>
+  <p>Choose a time and we'll confirm with your broker.</p>
+
+  <div class="form-group">
+    <label for="book-name">Full Name</label>
+    <input type="text" id="book-name" placeholder="Jane Smith">
+  </div>
+
+  <div class="form-group">
+    <label for="book-email">Email Address</label>
+    <input type="email" id="book-email" placeholder="jane@email.com">
+  </div>
+
+  <div class="form-group">
+    <label for="book-phone">Phone Number</label>
+    <input type="tel" id="book-phone" placeholder="604-555-0100">
+  </div>
+
+  <div class="form-group">
+    <label for="book-date">Preferred Date</label>
+    <input type="date" id="book-date">
+  </div>
+
+  <div class="form-group">
+    <label for="book-time">Preferred Time</label>
+    <select id="book-time">
+      <option value="09:00">9:00 AM</option>
+      <option value="10:00">10:00 AM</option>
+      <option value="11:00">11:00 AM</option>
+      <option value="13:00">1:00 PM</option>
+      <option value="14:00">2:00 PM</option>
+      <option value="15:00">3:00 PM</option>
+      <option value="16:00">4:00 PM</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="book-notes">Anything we should know?</label>
+    <textarea id="book-notes" rows="3" placeholder="Optional notes for your broker"></textarea>
+  </div>
+
+  <button class="btn-primary" id="book-submit" onclick="submitBooking()">Request Appointment</button>
+
+  <div class="result-panel" id="book-success" style="display:none;">
+    <p>✓ Appointment request sent. Your broker will confirm shortly.</p>
+  </div>
+
+  <div class="result-panel result-panel--warn" id="book-error" style="display:none;"></div>
+</section>
+
+<script>
+  // leadId must be set in the parent page context before this partial loads.
+  // e.g. <script>window.KENWARD_LEAD_ID = '<%= leadId %>';<\/script>
+  async function submitBooking() {
+    const btn = document.getElementById('book-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const leadId = window.KENWARD_LEAD_ID;
+    if (!leadId) {
+      document.getElementById('book-error').textContent = 'Session error. Please refresh and try again.';
+      document.getElementById('book-error').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Request Appointment';
+      return;
+    }
+
+    const payload = {
+      stage: 'BOOKING',
+      data: {
+        borrowerName:  document.getElementById('book-name').value.trim(),
+        email:         document.getElementById('book-email').value.trim(),
+        phone:         document.getElementById('book-phone').value.trim(),
+        preferredDate: document.getElementById('book-date').value,
+        preferredTime: document.getElementById('book-time').value,
+        notes:         document.getElementById('book-notes').value.trim(),
+      },
+    };
+
+    const errorEl = document.getElementById('book-error');
+    errorEl.style.display = 'none';
+
+    try {
+      const res = await fetch(`/api/v2/leads/${leadId}/transition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('book-success').style.display = 'block';
+        btn.style.display = 'none';
+      } else {
+        errorEl.textContent = data.error || 'Booking failed. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Request Appointment';
+      }
+    } catch (err) {
+      errorEl.textContent = 'Network error. Please try again.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Request Appointment';
+    }
+  }
+</script>

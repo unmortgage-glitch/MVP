@@ -1,0 +1,55 @@
+{
+  "pageTitle": "Start Your Mortgage Application",
+  "contentBlocks": [
+    {
+      "type": "form",
+      "data": {
+        "formTitle": "Initial Mortgage Inquiry",
+        "targetEndpoint": "/api/lead", 
+        "targetMethod": "POST",
+        "fields": [
+          {
+            "name": "clientName",
+            "label": "Full Legal Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "John D. Doe"
+          },
+          {
+            "name": "email",
+            "label": "Email Address",
+            "type": "email",
+            "required": true
+          },
+          {
+            "name": "annualIncome",
+            "label": "Gross Annual Income ($)",
+            "type": "number",
+            "required": true,
+            "placeholder": "e.g., 75000"
+          },
+          {
+            "name": "downPaymentAmount",
+            "label": "Estimated Down Payment ($)",
+            "type": "number",
+            "required": true,
+            "placeholder": "e.g., 50000"
+          },
+          {
+            "name": "loanPurpose",
+            "label": "Mortgage Goal",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"value": "", "text": "Select a goal"},
+              {"value": "Purchase", "text": "New Purchase"},
+              {"value": "Refinance", "text": "Refinance Existing"},
+              {"value": "Switch", "text": "Switch/Transfer"}
+            ]
+          }
+        ],
+        "submitButtonText": "Submit Inquiry & Get Pre-Qualified"
+      }
+    }
+  ]
+}

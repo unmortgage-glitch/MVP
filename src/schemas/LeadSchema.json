@@ -1,0 +1,93 @@
+// LeadSchema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://kenward.ca/schemas/LeadSchema.json",
+  "title": "Mortgage Lead Input Data Schema",
+  "description": "Schema for validating incoming mortgage lead data against the 5 C's of Credit and required financials.",
+  "type": "object",
+  "required": [
+    "applicant",
+    "property",
+    "loan_request"
+  ],
+  "properties": {
+    "applicant": {
+      "description": "Character, Capacity, and Capital information.",
+      "type": "object",
+      "required": [
+        "annual_gross_income", 
+        "credit_score", 
+        "monthly_debts",
+        "down_payment_source", 
+        "liquid_assets"         
+      ],
+      "properties": {
+        "annual_gross_income": { 
+          "type": "number", 
+          "minimum": 1, 
+          "description": "The Capacity element (Income)."
+        },
+        "credit_score": { 
+          "type": "integer", 
+          "minimum": 300, 
+          "maximum": 900,
+          "description": "The Character element."
+        },
+        "employment_status": { 
+          "type": "string", 
+          "enum": ["Salaried", "Self-Employed", "Hourly"] 
+        },
+        "liquid_assets": { 
+            "type": "number",
+            "minimum": 0,
+            "description": "Applicant's total immediately available funds/capital (Capital)."
+        },
+        "down_payment_source": { 
+            "type": "object",
+            "required": ["source_type", "amount"],
+            "properties": {
+                "source_type": { "type": "string", "enum": ["Savings", "SaleOfExistingProperty", "Gift", "RRSP"] },
+                "amount": { "type": "number", "minimum": 0 }
+            },
+            "description": "Source and amount of liquid assets (Capital) used for the down payment."
+        },
+        "monthly_debts": {
+          "type": "object",
+          "required": [
+            "credit_card_payments",
+            "car_loan_payments",
+            "other_loan_payments"
+          ],
+          "properties": {
+            "credit_card_payments": { "type": "number", "minimum": 0, "default": 0 },
+            "car_loan_payments": { "type": "number", "minimum": 0, "default": 0 },
+            "other_loan_payments": { "type": "number", "minimum": 0, "default": 0 },
+            "alimony_or_child_support": { "type": "number", "minimum": 0, "default": 0 }
+          },
+          "description": "Detailed monthly debt obligations for Capacity calculation."
+        }
+      }
+    },
+    "property": {
+      "description": "Collateral and Conditions information.",
+      "type": "object",
+      "required": ["value", "annual_taxes"],
+      "properties": {
+        "value": { "type": "number", "minimum": 10000, "description": "The Collateral element (Property Value)." },
+        "annual_taxes": { "type": "number", "minimum": 0 },
+        "monthly_heating_cost": { "type": "number", "minimum": 0, "default": 0 },
+        "monthly_condo_fee": { "type": "number", "minimum": 0, "default": 0 }
+      }
+    },
+    "loan_request": { 
+      "description": "The specific loan parameters being requested (Conditions).",
+      "type": "object",
+      "required": ["loan_amount_requested", "amortization_years"], 
+      "properties": {
+        "loan_amount_requested": { "type": "number", "minimum": 10000 },
+        "amortization_years": { "type": "integer", "minimum": 5, "maximum": 35 }
+      }
+    }
+  },
+  "additionalProperties": true
+}

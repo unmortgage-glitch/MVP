@@ -1,0 +1,166 @@
+<%# views/partials/questionnaire.ejs %>
+<%# 3-step suitability questionnaire → POST /api/v2/leads/:id/transition stage PRE_QUESTIONNAIRE %>
+
+<section class="questionnaire-section" id="questionnaire-section">
+  <h2>Quick Pre-Qualification</h2>
+  <p>Three short questions so your broker can prepare.</p>
+
+  <!-- Step indicators -->
+  <div class="step-indicators">
+    <span class="step-dot step-dot--active" id="dot-1"></span>
+    <span class="step-dot" id="dot-2"></span>
+    <span class="step-dot" id="dot-3"></span>
+  </div>
+
+  <!-- Step 1: Timeline + Rate preference -->
+  <div class="q-step" id="q-step-1">
+    <div class="form-group">
+      <label for="q-timeline">Where are you in your home buying journey?</label>
+      <select id="q-timeline">
+        <option value="">Select one…</option>
+        <option value="Ready">Ready to buy now</option>
+        <option value="3-6 months">Within 3–6 months</option>
+        <option value="6-12 months">6–12 months out</option>
+        <option value="Exploring">Just exploring</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="q-rate">Rate preference</label>
+      <select id="q-rate">
+        <option value="">Select one…</option>
+        <option value="Fixed">Fixed — I want predictability</option>
+        <option value="Variable">Variable — I'll take the risk</option>
+        <option value="Unsure">Not sure yet</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="qNext(1)">Next →</button>
+  </div>
+
+  <!-- Step 2: Property use + existing properties -->
+  <div class="q-step" id="q-step-2" style="display:none;">
+    <div class="form-group">
+      <label for="q-property-use">How will you use this property?</label>
+      <select id="q-property-use">
+        <option value="">Select one…</option>
+        <option value="Primary Residence">Primary Residence</option>
+        <option value="Investment">Investment / Rental</option>
+        <option value="Vacation">Vacation / Secondary</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="q-existing">How many properties do you currently own?</label>
+      <select id="q-existing">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3+</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="qBack(2)">← Back</button>
+      <button class="btn-primary" onclick="qNext(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Financial history -->
+  <div class="q-step" id="q-step-3" style="display:none;">
+    <div class="form-group">
+      <label>Have you ever declared bankruptcy or filed a consumer proposal?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="q-bankruptcy" value="false"> No</label>
+        <label><input type="radio" name="q-bankruptcy" value="true"> Yes</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Do you anticipate refinancing within 3 years?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="q-refinance" value="false"> No</label>
+        <label><input type="radio" name="q-refinance" value="true"> Possibly</label>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="qBack(3)">← Back</button>
+      <button class="btn-primary" id="q-submit" onclick="submitQuestionnaire()">Submit</button>
+    </div>
+  </div>
+
+  <div class="result-panel" id="q-success" style="display:none;">
+    <p>✓ Thank you. Your broker will review this ahead of your appointment.</p>
+  </div>
+
+  <div class="result-panel result-panel--warn" id="q-error" style="display:none;"></div>
+</section>
+
+<script>
+  function qNext(step) {
+    document.getElementById(`q-step-${step}`).style.display = 'none';
+    document.getElementById(`q-step-${step + 1}`).style.display = 'block';
+    document.getElementById(`dot-${step}`).classList.remove('step-dot--active');
+    document.getElementById(`dot-${step + 1}`).classList.add('step-dot--active');
+  }
+
+  function qBack(step) {
+    document.getElementById(`q-step-${step}`).style.display = 'none';
+    document.getElementById(`q-step-${step - 1}`).style.display = 'block';
+    document.getElementById(`dot-${step}`).classList.remove('step-dot--active');
+    document.getElementById(`dot-${step - 1}`).classList.add('step-dot--active');
+  }
+
+  async function submitQuestionnaire() {
+    const btn = document.getElementById('q-submit');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const leadId = window.KENWARD_LEAD_ID;
+    const bankruptcyVal = document.querySelector('input[name="q-bankruptcy"]:checked')?.value;
+    const refinanceVal  = document.querySelector('input[name="q-refinance"]:checked')?.value;
+
+    const errorEl = document.getElementById('q-error');
+    errorEl.style.display = 'none';
+
+    if (!bankruptcyVal || !refinanceVal) {
+      errorEl.textContent = 'Please answer all questions before submitting.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit';
+      return;
+    }
+
+    const payload = {
+      stage: 'PRE_QUESTIONNAIRE',
+      data: {
+        timeline:           document.getElementById('q-timeline').value,
+        ratePreference:     document.getElementById('q-rate').value,
+        propertyUse:        document.getElementById('q-property-use').value,
+        existingProperties: parseInt(document.getElementById('q-existing').value, 10),
+        bankruptcyHistory:  bankruptcyVal === 'true',
+        refinanceWithin3yr: refinanceVal === 'true',
+      },
+    };
+
+    try {
+      const res = await fetch(`/api/v2/leads/${leadId}/transition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('q-step-3').style.display = 'none';
+        document.getElementById('q-success').style.display = 'block';
+      } else {
+        errorEl.textContent = data.error || 'Submission failed. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit';
+      }
+    } catch (err) {
+      errorEl.textContent = 'Network error. Please try again.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit';
+    }
+  }
+</script>

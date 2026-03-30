@@ -1,0 +1,14 @@
+<section class="container section">
+    <% if (block.headline) { %>
+        <h2 class="header"><%- block.headline %></h2>
+ 
+   <% } %>
+    <ul class="collapsible">
+        <% block.items.forEach(item => { %>
+            <li>
+                <div class="collapsible-header"><i class="material-icons">question_answer</i><%- item.question %></div>
+                <div class="collapsible-body"><span><%- item.answer %></span></div>
+            </li>
+        <% }); %>
+    </ul>
+</section>

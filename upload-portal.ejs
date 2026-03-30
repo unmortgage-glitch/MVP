@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Upload — Kenward</title>
+  <link rel="stylesheet" href="/css/kenward.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="wordmark">Kenward</span>
+      <span class="header-meta">Document Upload</span>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-inner page-inner--narrow">
+
+      <h1>Upload Your Documents</h1>
+      <p>Your broker needs the following documents to complete your application. Each file is encrypted and stored securely.</p>
+
+      <div id="upload-list">
+
+        <% const docTypes = [
+          { id: 't4',            label: 'T4 Slip',                  hint: 'Most recent tax year' },
+          { id: 'noa',           label: 'Notice of Assessment',     hint: 'CRA NOA — most recent year' },
+          { id: 'paystub',       label: 'Pay Stub',                 hint: 'Last 2 pay periods' },
+          { id: 'bank_statement',label: 'Bank Statement',           hint: '3 months, all accounts' },
+          { id: 'photo_id',      label: 'Government-Issued ID',     hint: 'Driver's licence or passport' },
+          { id: 'void_cheque',   label: 'Void Cheque',              hint: 'For direct deposit setup' },
+        ]; %>
+
+        <% docTypes.forEach(function(doc) { %>
+          <div class="upload-item" id="upload-item-<%= doc.id %>">
+            <div class="upload-item__info">
+              <span class="upload-item__label"><%= doc.label %></span>
+              <span class="upload-item__hint"><%= doc.hint %></span>
+            </div>
+            <div class="upload-item__control">
+              <input
+                type="file"
+                id="file-<%= doc.id %>"
+                accept=".pdf,.jpg,.jpeg,.png"
+                style="display:none;"
+                onchange="uploadDoc('<%= doc.id %>', this)"
+              >
+              <button
+                class="btn-secondary"
+                onclick="document.getElementById('file-<%= doc.id %>').click()"
+                id="btn-<%= doc.id %>"
+              >Choose File</button>
+              <span class="upload-status" id="status-<%= doc.id %>"></span>
+            </div>
+          </div>
+        <% }); %>
+
+      </div>
+
+      <div class="result-panel" id="upload-complete" style="display:none;">
+        <p>✓ All documents uploaded. Your broker has been notified.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const TOKEN = '<%= token %>';
+    let uploadedCount = 0;
+    const TOTAL = 6;
+
+    async function uploadDoc(docType, input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const btn = document.getElementById(`btn-${docType}`);
+      const statusEl = document.getElementById(`status-${docType}`);
+
+      btn.disabled = true;
+      btn.textContent = 'Uploading…';
+      statusEl.textContent = '';
+      statusEl.className = 'upload-status';
+
+      const formData = new FormData();
+      formData.append('doc', file);
+      formData.append('docType', docType);
+
+      try {
+        const res = await fetch(`/upload/${TOKEN}/doc`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          statusEl.textContent = '✓ Uploaded';
+          statusEl.classList.add('upload-status--ok');
+          btn.textContent = 'Replace';
+          btn.disabled = false;
+
+          uploadedCount++;
+          if (uploadedCount >= TOTAL) {
+            document.getElementById('upload-complete').style.display = 'block';
+          }
+        } else {
+          statusEl.textContent = data.error || 'Upload failed';
+          statusEl.classList.add('upload-status--err');
+          btn.textContent = 'Retry';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        statusEl.textContent = 'Network error';
+        statusEl.classList.add('upload-status--err');
+        btn.textContent = 'Retry';
+        btn.disabled = false;
+      }
+
+      // Reset input so the same file can be re-selected if needed
+      input.value = '';
+    }
+  </script>
+
+</body>
+</html>

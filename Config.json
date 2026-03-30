@@ -1,0 +1,8 @@
+// Config.json
+{
+  "port": 8080,
+  "log_level": "info",
+  "pipeline_status": "PRODUCTION",
+  "bucket_name": "kenward-mortgage-crm-logs",
+  "project_id": "kenward-mortgage-crm"
+}

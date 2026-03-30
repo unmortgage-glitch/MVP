@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/header') %> 
+    
+    <title><%= pageTitle %></title>
+  </head>
+
+  <body>
+    <header>
+      <%- include('partials/navbar') %>
+    </header>
+
+    <main class="container">
+      <% if (typeof contentBlocks !== 'undefined' && contentBlocks.length > 0) { %>
+        
+        <% contentBlocks.forEach(function(block) { %>
+          <div class="dynamic-block-wrapper section">
+            <%- include('partials/' + block.type, { data: block.data }) %>
+          </div>
+        <% }); %>
+
+      <% } else { %>
+        
+        <div class="center-align section">
+          <h4>No content blocks found.</h4>
+          <p>Please check your content/live/ JSON file.</p>
+        </div>
+
+      <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();
+      });
+    </script>
+  </body>
+</html>

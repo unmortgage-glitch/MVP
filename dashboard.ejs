@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Kenward</title>
+  <link rel="stylesheet" href="/css/kenward.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="wordmark">Kenward</span>
+      <span class="header-meta">Broker Dashboard</span>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-inner">
+
+      <div class="page-title-row">
+        <h1>Leads</h1>
+        <span class="lead-count"><%= leads.length %> total</span>
+      </div>
+
+      <% if (leads.length === 0) { %>
+        <div class="result-panel">
+          <p>No leads yet. Share your intake link to get started.</p>
+        </div>
+      <% } else { %>
+        <div class="lead-list">
+          <% leads.forEach(function(lead) { %>
+            <div class="lead-card <%= lead.status === 'WARN' ? 'lead-card--warn' : '' %>">
+
+              <div class="lead-card__identity">
+                <span class="lead-card__name"><%= lead.borrowerName || 'Unnamed borrower' %></span>
+                <span class="lead-card__stage"><%= lead.stage %></span>
+              </div>
+
+              <div class="lead-card__metrics">
+                <% if (lead.kernelResults) { %>
+                  <span class="metric <%= lead.kernelResults.gds <= 32 ? 'metric--green' : 'metric--red' %>">
+                    GDS <%= lead.kernelResults.gds %>%
+                  </span>
+                  <span class="metric <%= lead.kernelResults.tds <= 44 ? 'metric--green' : 'metric--red' %>">
+                    TDS <%= lead.kernelResults.tds %>%
+                  </span>
+                <% } %>
+              </div>
+
+              <div class="lead-card__warns">
+                <% if (lead.warns && lead.warns.length > 0) { %>
+                  <% lead.warns.forEach(function(warn) { %>
+                    <div class="warn-item">
+                      <span class="warn-label">⚠ <%= warn.message %></span>
+                      <button
+                        class="btn-secondary btn-small"
+                        onclick="attestWarn('<%= lead.id %>', '<%= warn.id %>', this)"
+                      >Attest</button>
+                    </div>
+                  <% }); %>
+                <% } %>
+              </div>
+
+              <div class="lead-card__actions">
+                <a class="btn-secondary" href="/broker/lead/<%= lead.id %>">View</a>
+              </div>
+
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+
+    </div>
+  </main>
+
+  <script>
+    async function attestWarn(leadId, warnId, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Attesting…';
+
+      try {
+        const res = await fetch(`/api/v2/leads/${leadId}/attest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ warnId }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Remove the warn item from the DOM
+          btn.closest('.warn-item').remove();
+
+          // If no warns left on this card, remove the warn modifier class
+          const card = btn.closest('.lead-card');
+          const remaining = card.querySelectorAll('.warn-item');
+          if (remaining.length === 0) {
+            card.classList.remove('lead-card--warn');
+          }
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Attest';
+          alert(data.error || 'Attestation failed.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Attest';
+        alert('Network error. Please try again.');
+      }
+    }
+  </script>
+
+</body>
+</html>

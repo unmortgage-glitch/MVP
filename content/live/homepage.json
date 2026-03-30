@@ -1,0 +1,34 @@
+{
+  "pageTitle": "Home",
+  "slug": "homepage",
+  "status": "live",
+  "metadata": {
+    "title": "Home",
+    "description": "Welcome to Kenward Mortgage, where we help you be secure, be well, and thrive.",
+    "canonicalUrl": "https://kenward.ca/homepage"
+  },
+  "contentBlocks": [
+    {
+      "type": "image",
+      "data": {
+        "src": "/img/welcomehome.jpg",
+        "alt": "Colourful Mural: Welcome Home"
+      }
+    },
+    {
+      "type": "text",
+      "data": {
+        "headline": "Be Secure. Be Well. Thrive.",
+        "body": "We are an independent mortgage brokerage. We arrange mortgages of all types for British Columbians and their businesses. For most of us, having a place to call home means getting a mortgage."
+      }
+    },
+    {
+      "type": "cta",
+      "data": {
+        "headline": "Ready to Start?",
+        "buttonText": "Start Application",
+        "buttonLink": "https://kenward-mortgage.mtg-app.com/signup"
+      }
+    }
+  ]
+}

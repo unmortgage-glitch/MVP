@@ -1,32 +1,34 @@
-import { mkdir, writeFile, readFile, readdir } from 'fs/promises';
-import path from 'path';
+import pkg from 'pg';
+const { Pool } = pkg;
 
-/**
- * Kenward CMS v2 - Flattened Storage Gateway
- * Providing named exports for leadRoutes and uploadRoutes.
- */
+const pool = new Pool({
+    user: 'broker_admin',
+    password: '@Ontario7',
+    host: 'localhost',
+    port: 5432,
+    database: 'kenward_cms',
+});
 
 export async function saveLead(tenantId, leadId, data) {
-    console.log(`[storage] Saving Lead: ${leadId}`);
-    return { success: true };
-}
-
-export async function readLead(tenantId, leadId) {
-    console.log(`[storage] Reading Lead: ${leadId}`);
-    return { id: leadId, status: 'mock' };
+    const query = 'INSERT INTO leads (id, tenant_id, full_name, email, extracted_data) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [leadId, tenantId, data.fullName || 'Unknown', data.email || null, JSON.stringify(data)];
+    const res = await pool.query(query, values);
+    return res.rows[0];
 }
 
 export async function readLeads(tenantId) {
-    console.log(`[storage] Reading all leads for Tenant: ${tenantId}`);
-    return [];
+    const res = await pool.query('SELECT * FROM leads WHERE tenant_id = $1 ORDER BY created_at DESC', [tenantId]);
+    return res.rows;
 }
 
-// Keep the object export as well for uploadRoutes
+export async function readLead(tenantId, leadId) {
+    const res = await pool.query('SELECT * FROM leads WHERE id = $1 AND tenant_id = $2', [leadId, tenantId]);
+    return res.rows[0];
+}
+
 export const storage = {
-    saveDocument: async (tenantId, leadId, file) => {
-        return { path: `data/tenants/${tenantId}/docs/${file.filename}` };
-    },
     saveLead,
     readLead,
-    readLeads
+    readLeads,
+    saveDocument: async (tenantId, leadId, file) => ({ path: `uploads/${file.filename}` })
 };

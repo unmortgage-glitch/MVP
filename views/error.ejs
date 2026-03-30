@@ -1,28 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error — Kenward</title>
-  <link rel="stylesheet" href="/css/kenward.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error — Kenward</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
-<body>
-
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="wordmark" href="/">Kenward</a>
+<body class="grey lighten-4">
+    <div class="container" style="margin-top: 50px;">
+        <div class="card-panel red lighten-4 red-text text-darken-4">
+            <h4>System Error</h4>
+            <p><%= typeof message !== 'undefined' ? message : 'An unexpected error occurred.' %></p>
+            <a href="/" class="btn blue-grey">Return Home</a>
+        </div>
     </div>
-  </header>
-
-  <main class="page-main">
-    <div class="page-inner page-inner--narrow">
-      <div class="result-panel result-panel--warn">
-        <h1><%= code || 'Error' %></h1>
-        <p><%= message || 'Something went wrong.' %></p>
-        <a class="btn-secondary" href="javascript:history.back()">← Go Back</a>
-      </div>
-    </div>
-  </main>
-
 </body>
 </html>
